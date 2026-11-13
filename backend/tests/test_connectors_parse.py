@@ -1,5 +1,5 @@
 """Parsers are tested against captured payload shapes so a key is not needed to run the suite."""
-from app.connectors.aeroapi import parse_status
+from app.connectors.aeroapi import parse_status, to_icao_ident
 from app.connectors.bestbuy import parse_open_box
 from app.connectors.ebay import parse_search
 from app.connectors.keepa import parse_product
@@ -55,3 +55,10 @@ def test_weather_parse():
 def test_hotel_manual_links():
     l = manual_check_links("Hilton Midtown", "New York", date(2026, 12, 20), date(2026, 12, 23))
     assert "checkin=2026-12-20" in l["google_hotels"] and "booking.com" in l["booking"]
+
+
+def test_icao_ident_mapping():
+    assert to_icao_ident("DL1234") == "DAL1234"
+    assert to_icao_ident("dl 455") == "DAL455"
+    assert to_icao_ident("DAL1234") == "DAL1234"
+    assert to_icao_ident("ZZ99") == "ZZ99"

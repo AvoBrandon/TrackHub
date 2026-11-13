@@ -15,6 +15,21 @@ from .base import Connector, ConnectorError
 
 BASE = "https://aeroapi.flightaware.com/aeroapi"
 
+# AeroAPI strongly prefers ICAO idents (DAL1234) over IATA (DL1234) to avoid ambiguity.
+IATA_TO_ICAO = {"DL": "DAL", "UA": "UAL", "AA": "AAL", "WN": "SWA", "B6": "JBU", "AS": "ASA", "NK": "NKS",
+                "F9": "FFT", "G4": "AAY", "HA": "HAL", "SY": "SCX", "BA": "BAW", "VS": "VIR", "AF": "AFR",
+                "KL": "KLM", "LH": "DLH", "IB": "IBE", "AZ": "ITY", "EI": "EIN", "TP": "TAP", "LX": "SWR",
+                "OS": "AUA", "SK": "SAS", "AY": "FIN", "SN": "BEL", "AC": "ACA", "WS": "WJA", "AM": "AMX",
+                "JL": "JAL", "NH": "ANA", "KE": "KAL", "SQ": "SIA", "EK": "UAE", "QR": "QTR", "QF": "QFA",
+                "TK": "THY", "CM": "CMP", "AV": "AVA", "LA": "LAN", "Y4": "VOI", "VB": "VIV"}
+
+
+def to_icao_ident(flight_number: str) -> str:
+    fn = flight_number.strip().upper().replace(" ", "")
+    if len(fn) > 2 and fn[:2] in IATA_TO_ICAO and fn[2:].isdigit():
+        return IATA_TO_ICAO[fn[:2]] + fn[2:]
+    return fn
+
 
 @dataclass
 class FlightStatus:
@@ -52,7 +67,8 @@ class AeroAPI(Connector):
         if not self_.configured():
             raise ConnectorError("AeroAPI key not configured")
         start, end = day.strftime("%Y-%m-%d"), (day + timedelta(days=1)).strftime("%Y-%m-%d")
-        r = await self_._get(f"{BASE}/flights/{ident}", params={"start": start, "end": end},
+        r = await self_._get(f"{BASE}/flights/{to_icao_ident(ident)}",
+                             params={"start": start, "end": end, "ident_type": "designator"},
                              headers={"x-apikey": self_.key})
         return parse_status(r.json())
 
