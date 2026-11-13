@@ -1,4 +1,4 @@
-"""One-time Gmail sign-in helper. Run this on a computer WITH a browser (your Windows desktop):
+r"""One-time Gmail sign-in helper. Run this on a computer WITH a browser (your Windows desktop):
 
     pip install google-auth-oauthlib
     python gmail-auth.py path\to\client_secret_XXXX.json
