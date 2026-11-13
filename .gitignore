@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/.env
+backend/data/*.db
+backend/secrets/*
+!backend/secrets/.gitignore
+.venv/
+# flutter
+app/build/
+app/.dart_tool/
+app/.flutter-plugins*
+app/ios/Pods/
+app/ios/.symlinks/
+app/windows/flutter/ephemeral/
