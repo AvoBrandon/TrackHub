@@ -1,0 +1,15 @@
+# Run the always-on watcher anywhere Docker runs (a $5 VPS, a NAS, a Raspberry Pi, your Windows tower).
+services:
+  clawback:
+    build: ../backend
+    restart: unless-stopped
+    env_file: ../backend/.env
+    ports: ["8787:8787"]
+    volumes:
+      - ../backend/data:/srv/data
+      - ../backend/secrets:/srv/secrets
+    environment:
+      - DATABASE_URL=sqlite:////srv/data/clawback.db
+      - GMAIL_CLIENT_SECRET_FILE=/srv/secrets/gmail_client_secret.json
+      - GMAIL_TOKEN_FILE=/srv/secrets/gmail_token.json
+      - APNS_KEY_FILE=/srv/secrets/AuthKey.p8

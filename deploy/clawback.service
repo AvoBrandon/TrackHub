@@ -1,0 +1,16 @@
+# systemd unit for a Linux VPS. Copy to /etc/systemd/system/clawback.service, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now clawback
+[Unit]
+Description=Clawback watcher service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=clawback
+WorkingDirectory=/opt/clawback/backend
+ExecStart=/opt/clawback/backend/.venv/bin/python -m app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
